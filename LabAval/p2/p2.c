@@ -86,66 +86,40 @@ void funcao(Matriz *M, int *a1, int *a2){
 	/* Number of sub-matrix inside */
 	n_submatrixx = (int)((M->colunas)/size_submatrix);
 	n_submatrixy = (int)((M->linhas)/size_submatrix);
-	
+
 	/* Case that a matrix 2x2 is not suitable */
 	if((M->colunas < 2) || (M->linhas <2)){
 		/* origin point */
 		*a1 = sum_elements(M, 0, 0,a2);
 	}
 	else{
-		/*  Matrix with a surprising  Width */
-		if(M->colunas >= M->linhas){ 
-			for(i = 0; i< size_submatrix * n_submatrixx; i+=2){
-				for(j =0; j<size_submatrix * n_submatrixy; j+=2){
-					(*a1) += sum_submatrix(M->matriz,i,j);
-					(*a2) += sum_abs_submatrix(M->matriz,i,j);
-				}
+		for(i = 0; i< size_submatrix * n_submatrixx; i+=2){
+			for(j =0; j<size_submatrix * n_submatrixy; j+=2){
+				(*a1) += sum_submatrix(M->matriz,i,j);
+				(*a2) += sum_abs_submatrix(M->matriz,i,j);
 			}
-			/* Number Odd of columns */
-			if( (( size_submatrix * n_submatrixx ) - (M->colunas))!= 0){
-				(*a1) += sum_elements(M,0,(M->colunas)-1, a2);
-				++repeated_val; 
-			}
-			/* Number odd of lines */
-			if( ((size_submatrix * n_submatrixy) - (M->linhas)) != 0){
-				(*a1) += sum_elements(M,(M->linhas)-1,0,a2);}
-			++repeated_val;
- 		}			
+		}
+		/* Number Odd of columns */
+		if( (( size_submatrix * n_submatrixx ) - (M->colunas))!= 0){
+			(*a1) += sum_elements(M,0,(M->colunas)-1, a2);
+			++repeated_val; 
+		}
+		/* Number odd of lines */
+		if( ((size_submatrix * n_submatrixy) - (M->linhas)) != 0){
+			(*a1) += sum_elements(M,(M->linhas)-1,0,a2);
+			++repeated_val;		
+		}
 
-		/* Matrix w/ a surprising Length : Lines > Columns */
-
-		else{
-
-			for(i = 0; i< size_submatrix * n_submatrixy; i+=2){
-				for(j =0; j<size_submatrix * n_submatrixx; j+=2){
-					(*a1) += sum_submatrix(M->matriz,i,j); 
-					(*a2) += sum_abs_submatrix(M->matriz,i,j);
-
-				}
-			}
-			if( (( size_submatrix * n_submatrixx ) - (M->colunas))!= 0){
-				(*a1) += sum_elements(M,0,(M->colunas)-1,a2);
-				++repeated_val;
-			}
-			if( ((size_submatrix * n_submatrixy) - (M->linhas)) != 0){
-				++repeated_val;
-				(*a1) += sum_elements(M,(M->linhas)-1,0,a2);}
-
+		/* Repeated values in sum */ 
+		if(repeated_val  == EXISTS){
+			*(a1)-= (M->matriz[(M->linhas-1)][M->colunas-1]);
+			*(a2)-= (M->matriz[(M->linhas-1)][M->colunas-1]);
 
 		}
 
-
 	}
 
-	/* Repeated values in sum */ 
-	if(repeated_val  == EXISTS){
-		*(a1)-= (M->matriz[(M->linhas-1)][M->colunas-1]);
-		*(a2)-= (M->matriz[(M->linhas-1)][M->colunas-1]);
-	
-	}
-	
 }
-
 
 int main(int argc, char *argv[])
 {
