@@ -124,7 +124,7 @@ void funcao(Matriz *M, int *a1, int *a2){
 int main(int argc, char *argv[])
 {
 	int i, j;
-	int out1, out2; 
+	int out1=0, out2=0; 
 	Matriz MAT;
 	FILE *fpin;
 

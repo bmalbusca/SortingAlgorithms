@@ -14,16 +14,43 @@
 /* define ratio of data items, N, to buckets, M, according to taste */
 #define NMR 4
 
+
+
+
+/*
+ *   Function: compareItems
+ *    
+ *   Description:
+ *       Item comparison function to be passed in for List sorting
+ */
+
+int  compareItems(Item it1, Item it2)
+{
+    int i1, i2;
+
+    i1 = *((int *) it1);
+    i2 = *((int *) it2);
+
+    if (i1 < i2)
+        return -1;
+    if (i1 > i2)
+        return 1;
+    return 0;
+}
+
+
+
+
 /*
  *  Function:
  *    bucketSort()
  *
  */
 void    bucketSort(int *vtab, LinkedList **btab,
-                    int bcnt, int vcnt, int vmin, int vmax)
+        int bcnt, int vcnt, int vmin, int vmax)
 {
-    int i;
-    LinkedList *lp;
+    int i,j,err, index;
+    LinkedList *lp, *aux;
 
     for (i=0; i < bcnt; i++)
     {
@@ -33,12 +60,30 @@ void    bucketSort(int *vtab, LinkedList **btab,
     /* placeholder for algorithm to be implemented */
     for (i=0; i < vcnt; i++)
     {
-        vtab[i] = 0;
+        index = bcnt * (vtab[i])/(vmax + 1);
+        btab[index] = insertSortedLinkedList(btab[index],(Item)(&vtab[i]),compareItems, &err);
+        if(err==2){
+            perror("Allocation Failed");
+        }
     }
+
+    j =0;
+
+    for(i=0; i< bcnt; i++){
+
+        for(aux = btab[i]; aux != NULL; aux=getNextNodeLinkedList(aux)){
+
+            vtab[j] = *((int *)getItemLinkedList(aux));
+
+            ++j;
+        }
+
+    }  
+
 }
 
 
- /*
+/*
  *  Function:
  *    main()
  *
@@ -71,27 +116,38 @@ int main(int argc, char *argv[])
         if (ibuf > vmax)    vmax = ibuf;
         if (ibuf < vmin)    vmin = ibuf;
     }
-/*  printf("Read %d ints, min = %d, max = %d\n", vcnt, vmin, vmax);     */
+
+    printf("Read %d ints, min = %d, max = %d\n", vcnt, vmin, vmax);
 
     /* allocate memory for int value table   */
     vtab = (int *) malloc( vcnt * sizeof(int) );
-    
+
     /* second scan: store int values */
     rewind(fp);
+    printf("|");
     for (i=0; i < vcnt; i++) {
         fscanf(fp, "%d", &(vtab[i]) );
+        printf("%i|",vtab[i]);
     }
     fclose(fp);
 
     /* allocate bucket table (with at least one bucket) */
 
-    bcnt = 1 + vcnt / NMR;
+    bcnt = 1 + vcnt / NMR; /* Number of buckets */
     btab = (LinkedList **) malloc (bcnt * sizeof(LinkedList *));
-    
+
     /* call bucket sort, print result  */
 
-    bucketSort(vtab, btab, bcnt, vcnt, vmin, vmax);
+    /*
+     * vtab - table of int's
+     * btab - table of (buckets) pointer to lists  
+     * vcnt - Number of readed values (int)
+     * bcnt - Number of buckets
+     * vmin, vmax - maximum and minimum (int) value readed
+     */
 
+    bucketSort(vtab, btab, bcnt, vcnt, vmin, vmax);
+    
     for (i=0; i < vcnt; i++) {
         printf("%d\n", vtab[i]);
     }
