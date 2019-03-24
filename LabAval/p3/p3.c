@@ -15,6 +15,15 @@
 #define NMR 4
 
 
+/*
+ *  *  Function:
+ */  
+void freeEntryItem(Item item)
+{
+    return;       /* no mem actually allocated */
+}
+
+
 
 
 /*
@@ -49,8 +58,11 @@ int  compareItems(Item it1, Item it2)
 void    bucketSort(int *vtab, LinkedList **btab,
         int bcnt, int vcnt, int vmin, int vmax)
 {
-    int i,j,err, index;
-    LinkedList *lp, *aux;
+    int i, j=0;
+    int err, index, counter =0;
+
+    LinkedList *lp; 
+    LinkedList *aux;
 
     for (i=0; i < bcnt; i++)
     {
@@ -58,27 +70,28 @@ void    bucketSort(int *vtab, LinkedList **btab,
         btab[i] = lp;
     }
     /* placeholder for algorithm to be implemented */
-    for (i=0; i < vcnt; i++)
+    printf("\n size of btab : %i\n",bcnt);
+    for (i=0; i < vcnt; ++i)
     {
         index = bcnt * (vtab[i])/(vmax + 1);
         btab[index] = insertSortedLinkedList(btab[index],(Item)(&vtab[i]),compareItems, &err);
         if(err==2){
             perror("Allocation Failed");
         }
+    
     }
 
-    j =0;
 
-    for(i=0; i< bcnt; i++){
 
-        for(aux = btab[i]; aux != NULL; aux=getNextNodeLinkedList(aux)){
-
-            vtab[j] = *((int *)getItemLinkedList(aux));
-
-            ++j;
-        }
-
-    }  
+    printf_bucket(btab,bcnt); 
+/* fazer disto funcao  para cada lista*/
+       while(j<bcnt){
+            for(aux = btab[j]; aux != NULL; (aux = getNextNodeLinkedList(aux))){            
+            vtab[counter] = *((int *)getItemLinkedList(aux));
+            counter++;
+            }
+        ++j;
+       }
 
 }
 
@@ -147,11 +160,19 @@ int main(int argc, char *argv[])
      */
 
     bucketSort(vtab, btab, bcnt, vcnt, vmin, vmax);
-    
+    printf(" \n");
+
     for (i=0; i < vcnt; i++) {
         printf("%d\n", vtab[i]);
     }
 
+
+    for(i =0; i <bcnt; i++){        
+        freeLinkedList(btab[i],freeEntryItem);     
+    }
+
+    free(btab);
+    free(vtab);
     /* free memory */
     /* ... */
 

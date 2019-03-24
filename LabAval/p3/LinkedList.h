@@ -203,6 +203,6 @@ LinkedList * insertSortedLinkedList(LinkedList * first,
                            (Item item1, Item item2),
                            int * err);
 
-
+void printf_bucket(LinkedList ** bucket_list, int b_size);
 /* End of: Protect multiple inclusions                              */
 #endif

@@ -199,6 +199,27 @@ LinkedList *insertUnsortedLinkedList(LinkedList *next, Item this)
 }
 
 
+void printf_bucket(LinkedList ** btab, int b_size){
+    
+    int i;
+
+    LinkedList * head;
+
+    printf("\nSorted Bucket List (Ordered)\n");
+        for(i =0; i < b_size; ++i){
+            
+            head = btab[i];
+            printf("btab[%i] |",i);
+            
+            while(head != NULL){
+        
+            printf("%i|",*((int *)head->this)); 
+            head = head->next;
+        }
+            printf("\n");
+        }
+}
+
 /*
  *  Function:
  *    insertSortedLinkedList
