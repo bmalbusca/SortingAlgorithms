@@ -204,5 +204,6 @@ LinkedList * insertSortedLinkedList(LinkedList * first,
                            int * err);
 
 void printf_bucket(LinkedList ** bucket_list, int b_size);
+int  getItemBuckets(LinkedList *  btab, int * vtab, int n_inserted);
 /* End of: Protect multiple inclusions                              */
 #endif

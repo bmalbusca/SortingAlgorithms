@@ -163,6 +163,23 @@ Item getItemLinkedList(LinkedList *node)
 }
 
 
+int  getItemBuckets(LinkedList * btab, int * vtab, int n_inserted){
+    
+    LinkedList * aux;
+    aux = btab;
+    
+    while(aux != NULL){
+
+
+     vtab[n_inserted] = *((int *)aux->this);
+     aux = aux->next;
+     n_inserted++;
+
+    }
+        
+return n_inserted;
+}
+
 
 /*
  *  Function:

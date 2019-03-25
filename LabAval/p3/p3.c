@@ -37,8 +37,8 @@ int  compareItems(Item it1, Item it2)
 {
     int i1, i2;
 
-    i1 = *((int *) it1);
-    i2 = *((int *) it2);
+    i1 = *((int*)it1);
+    i2 =*((int*)it2);
 
     if (i1 < i2)
         return -1;
@@ -58,11 +58,12 @@ int  compareItems(Item it1, Item it2)
 void    bucketSort(int *vtab, LinkedList **btab,
         int bcnt, int vcnt, int vmin, int vmax)
 {
-    int i, j=0;
-    int err, index, counter =0;
-
+        
+    int i = 0;
+    int err =0 , index = 0, index_vec =0;
+    int * ordered_vtab = (int*)calloc(vcnt, sizeof(int));
     LinkedList *lp; 
-    LinkedList *aux;
+    Item sender;
 
     for (i=0; i < bcnt; i++)
     {
@@ -73,8 +74,11 @@ void    bucketSort(int *vtab, LinkedList **btab,
     printf("\n size of btab : %i\n",bcnt);
     for (i=0; i < vcnt; ++i)
     {
+
         index = bcnt * (vtab[i])/(vmax + 1);
-        btab[index] = insertSortedLinkedList(btab[index],(Item)(&vtab[i]),compareItems, &err);
+        sender =(Item)((int*)(&vtab[i])); 
+        
+        btab[index] = insertSortedLinkedList(btab[index],sender,compareItems, &err);
         if(err==2){
             perror("Allocation Failed");
         }
@@ -83,19 +87,21 @@ void    bucketSort(int *vtab, LinkedList **btab,
 
 
 
-    printf_bucket(btab,bcnt); 
+   printf_bucket(btab,bcnt); 
 /* fazer disto funcao  para cada lista*/
-       while(j<bcnt){
-            for(aux = btab[j]; aux != NULL; (aux = getNextNodeLinkedList(aux))){            
-            vtab[counter] = *((int *)getItemLinkedList(aux));
-            counter++;
-            }
-        ++j;
-       }
+for( i =0; i<bcnt; ++i){
+index_vec = getItemBuckets(btab[i], ordered_vtab,index_vec);
+}
+for(i =0; i<vcnt; ++i){
+    vtab[i]=ordered_vtab[i];
 
 }
 
+free(ordered_vtab);
 
+    
+
+}
 /*
  *  Function:
  *    main()
@@ -103,14 +109,14 @@ void    bucketSort(int *vtab, LinkedList **btab,
  */
 int main(int argc, char *argv[])
 {
-    int ibuf, i;
-    int *vtab;              /* data values table   */
+    int ibuf = 0 , i = 0;
+    int *vtab = NULL;              /* data values table   */
     int vcnt = 0;
     int vmin = INT_MAX;
     int vmax = INT_MIN;     /* not a bug */
     LinkedList **btab;
-    int  bcnt;              /* size of bucket table */
-    FILE *fp;
+    int  bcnt = 0;              /* size of bucket table */
+    FILE *fp = NULL;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <file>\n", argv[0]);
@@ -137,11 +143,13 @@ int main(int argc, char *argv[])
 
     /* second scan: store int values */
     rewind(fp);
+    
     printf("|");
     for (i=0; i < vcnt; i++) {
         fscanf(fp, "%d", &(vtab[i]) );
         printf("%i|",vtab[i]);
     }
+    
     fclose(fp);
 
     /* allocate bucket table (with at least one bucket) */
